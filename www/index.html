@@ -34,20 +34,83 @@
           </tbody>
           <tfoot>
             <td><input id="taskName" type="text" class="form-control" placeholder="New Task" /></td>
-            <td><button class="btn btn-success"><span class="glyphicon glyphicon-plus"></span></button>
+            <td><button id="addButton" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span></button>
           </tfoot>
         </table>
       </div>
       <footer>
         <p>&copy; Terry God Damn Smith</p>
       </footer>
-    </div> <!-- /container -->        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.1.min.js"><\/script>')</script>
+    </div> <!-- /container --> 
 
-        <script src="js/vendor/bootstrap.min.js"></script>
 
-        <script type="text/javscript">
-            
-        </script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.1.min.js"><\/script>')</script>
+
+    <script src="js/vendor/bootstrap.min.js"></script>
+
+    <script type="text/javascript">
+        var table = (function($){
+
+            //Private variables
+            var tasks = [],
+                $inp = $("#taskName"),
+                $list = $(".table tbody");
+
+            function addTask(){
+                var text = $inp.val();
+                tasks.push({
+                  text:text,
+                  done:false
+                });
+                $inp.val("");
+            }
+
+            function validateText(){
+                var text = $inp.val();
+                return (text && text.length>0 && text!="");
+            }
+
+            function addError(){
+                $inp.parent().addClass('has-error');
+            }
+
+            function clearErrors(){
+                $inp.parent().removeClass('has-error');
+            }
+
+            function drawTasks(){
+                $list.empty();
+                $(tasks).each(function(){
+                   $list.append(createTaskRow(this));
+                })
+            }
+
+            function createTaskRow(task){
+                return $("<tr />")
+                       .append("<td>"+task.text+"</td>")
+                       .append('<td><button class="btn btn-primary"><span class="glyphicon glyphicon-ok"></span></button></td>');
+            }
+
+            return {
+               add:function(){
+                    clearErrors();
+                    if(!validateText()){
+                        addError();
+                        return;
+                    }
+                    addTask();
+                    drawTasks();
+               }
+            }
+
+        })(jQuery);
+
+        $(function(){
+            $("#addButton").click(table.add);
+        });
+    </script>
+
+
     </body>
 </html>
