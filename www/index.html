@@ -90,22 +90,39 @@
             }
 
             function createTaskRow(task){
+                var $button = $('<button class="btn"></button>');
+                if(task.done){
+                   $button
+                      .addClass('btn-danger')
+                      .append('<span class="glyphicon glyphicon-remove"></span>')
+                      .click(function(){
+                          table.del(task);
+                      });
+                }else{
+                    $button
+                      .addClass('btn-primary')
+                      .append('<span class="glyphicon glyphicon-ok"></span>')
+                      .click(function(){
+                          table.doTask(task);
+                      });
+                }
+
                 return $("<tr />")
                        .addClass(task.done?"done":"")
                        .append("<td>"+task.text+"</td>")
                        .append(
                           $('<td></td>')
-                          .append(
-                              $('<button class="btn btn-primary"><span class="glyphicon glyphicon-ok"></span></button>')
-                              .click(function(){
-                                  table.doTask(task);
-                              })
-                          )
+                          .append($button)
                         );
             }
 
             function doTask(task){
                 task.done = true;
+            }
+
+            function deleteTask(task){
+                var index = $.inArray(task, tasks);
+                tasks.splice(index,1);
             }
 
             return {
@@ -120,6 +137,10 @@
                },
                doTask:function(task){
                   doTask(task);
+                  drawTasks();
+               },
+               del:function(task){
+                  deleteTask(task);
                   drawTasks();
                }
             }
