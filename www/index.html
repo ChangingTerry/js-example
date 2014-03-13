@@ -54,15 +54,15 @@
 
     <script type="text/javascript">
         //The main object to use as our interface
-        //This the only varuable decalred in the global namespace 
-        //  Takes jQuery as an argument to stop $ name confusion with other libaries
+        //This the only variable declared in the global namespace 
+        //  Takes jQuery as an argument to stop $ name confusion with other libraries
         //  
         var table = (function($){
             //Everything inside here is private
             
             //Private variables
             var tasks = [],                 //Task List
-                $inp = $("#taskName"),      //Cache the lookup for the input feild
+                $inp = $("#taskName"),      //Cache the lookup for the input field
                 $list = $(".table tbody");  //The table body, our list
 
             /**
@@ -83,7 +83,7 @@
             }
 
             /**
-             * Ensure that inpput text has some content
+             * Ensure that input text has some content
              * 
              * @return {bool} true if content present
              */
@@ -139,7 +139,7 @@
                 //Create a button to click
                 var $button = $('<button class="btn"></button>');
 
-                //Depedning if task is done
+                //Depending if task is done
                 if(task.done){
                    //If done, offer to remove
                    $button
@@ -185,7 +185,7 @@
              * @return {void}
              */
             function doTask(task){
-                //Task is passed by refeence so all we need to is mark it done
+                //Task is passed by reference so all we need to is mark it done
                 task.done = true;
             }
 
