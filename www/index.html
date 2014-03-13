@@ -53,101 +53,214 @@
     <script src="js/vendor/bootstrap.min.js"></script>
 
     <script type="text/javascript">
+        //The main object to use as our interface
+        //This the only varuable decalred in the global namespace 
+        //  Takes jQuery as an argument to stop $ name confusion with other libaries
+        //  
         var table = (function($){
-
+            //Everything inside here is private
+            
             //Private variables
-            var tasks = [],
-                $inp = $("#taskName"),
-                $list = $(".table tbody");
+            var tasks = [],                 //Task List
+                $inp = $("#taskName"),      //Cache the lookup for the input feild
+                $list = $(".table tbody");  //The table body, our list
 
+            /**
+             * Adds a new task to the list
+             * 
+             * @return {void}
+             */
             function addTask(){
+                //Grab the text from the input value
                 var text = $inp.val();
+                //Create a new task object and add it to out list
                 tasks.push({
-                  text:text,
-                  done:false
+                  text:text,  //The text to display
+                  done:false  //Done indicator
                 });
+                //Reset the input value to nothing
                 $inp.val("");
             }
 
+            /**
+             * Ensure that inpput text has some content
+             * 
+             * @return {bool} true if content present
+             */
             function validateText(){
+                //Grab the text
                 var text = $inp.val();
+                //Ensure that it's truthy, has some length and is not an empty string
                 return (text && text.length>0 && text!="");
             }
 
+            /**
+             * Add an error to the input field
+             * 
+             * @return {void}
+             */
             function addError(){
+                //To the parent of the input (td) add the error class
                 $inp.parent().addClass('has-error');
             }
 
+            /**
+             * Remove all page errors
+             * 
+             * @return {void} 
+             */
             function clearErrors(){
+                //To the parent of the input (td) remove the error class if present
                 $inp.parent().removeClass('has-error');
             }
 
+            /**
+             * Draw the current task list in the holder
+             * 
+             * @return {void} 
+             */
             function drawTasks(){
+                //Remove everything from the list container
                 $list.empty();
+                //Cycle over tasks
                 $(tasks).each(function(){
+                   //Create a task row and append it to the list
                    $list.append(createTaskRow(this));
                 })
             }
 
+            /**
+             * Creates the row with events
+             * 
+             * @param  {Object object} task The task to draw
+             * @return {void} 
+             */
             function createTaskRow(task){
+                //Create a button to click
                 var $button = $('<button class="btn"></button>');
+
+                //Depedning if task is done
                 if(task.done){
+                   //If done, offer to remove
                    $button
+                      //Make button red
                       .addClass('btn-danger')
+                      //Add the remove icon
                       .append('<span class="glyphicon glyphicon-remove"></span>')
+                      //When clicked
                       .click(function(){
+                          //Remove the task
                           table.del(task);
                       });
                 }else{
+                    //Not done, offer a 'do' option
                     $button
+                      //Make button blue
                       .addClass('btn-primary')
+                      //Add tick icon
                       .append('<span class="glyphicon glyphicon-ok"></span>')
+                      //When clicked
                       .click(function(){
+                          //Do the task
                           table.doTask(task);
                       });
                 }
-
+                //Build a row item
                 return $("<tr />")
+                       //If task is done, add done class
                        .addClass(task.done?"done":"")
+                       //Text cell
                        .append("<td>"+task.text+"</td>")
+                       //Button cell
                        .append(
                           $('<td></td>')
                           .append($button)
                         );
             }
 
+            /**
+             * Mark a task done
+             * 
+             * @param  {Object object} task the task to 'do'
+             * @return {void}
+             */
             function doTask(task){
+                //Task is passed by refeence so all we need to is mark it done
                 task.done = true;
             }
 
+            /**
+             * Delete a task from the list
+             * 
+             * @param  {Object object} task the task to delete from the list
+             * @return {void}
+             */
             function deleteTask(task){
+                //Find task in array
                 var index = $.inArray(task, tasks);
+                //Remove just that one item from the list
                 tasks.splice(index,1);
             }
 
+            /**
+             * Public/Exposed methods
+             */
             return {
+               /**
+                * Add a new task
+                * 
+                * @return {void}
+                */
                add:function(){
+                    //Remove any previous errors
                     clearErrors();
+                    //Is text valid?
                     if(!validateText()){
+                        //Add an error
                         addError();
+                        //Bail
                         return;
                     }
+                    //Add the task
                     addTask();
+                    //Draw the current list
                     drawTasks();
                },
+               /**
+                * Mark a task done
+                * 
+                * @param  {Object object} task the task to do
+                * @return {void}
+                */
                doTask:function(task){
+                  //Do the task
                   doTask(task);
+                  //Redraw the list
                   drawTasks();
                },
+               /**
+                * Delete a task
+                * 
+                * @param  {Object object} task the task to delete
+                * @return {void}
+                */
                del:function(task){
+                  //Remove task
                   deleteTask(task);
+                  //Draw the current list
                   drawTasks();
                }
             }
 
-        })(jQuery);
+        })(jQuery);//Passing jQuery as a parameter
 
+        /**
+         * Lets get this party started!!
+         *
+         * on dom ready...set go
+         */
         $(function(){
+            //Bind the add button click to our table
             $("#addButton").click(table.add);
         });
     </script>
