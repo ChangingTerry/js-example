@@ -1,0 +1,14 @@
+{
+  "name": "Todo-Example",
+  "version": "0.0.1",
+  "description": "Example Todo list in different frameworks",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Terry Smith <terry.smith@changinghorizon.co.uk>",
+  "license": "None",
+  "dependencies": {
+    "connect": "^2.14.2"
+  }
+}
