@@ -17,7 +17,22 @@
                 padding-bottom: 20px;
             }
             .done {
+              color: #CCC;
               text-decoration: line-through;
+            }
+            table tbody td {
+                font-size: 20px;
+                height: 55px;
+                line-height: 55px;
+            }
+            table tbody .btn {
+                display: none;
+            }
+            table tbody tr:hover {
+                cursor: pointer;
+            }
+            table tbody tr:hover .btn {
+                display: inline-block;
             }
         </style>
         <link rel="stylesheet" href="css/bootstrap-theme.min.css">
@@ -28,6 +43,7 @@
     <body>
       <div class="container">
       <h1>ToDO list</h1>
+          <h5>Edited version 19th March 2014</h5>
         <table id="todo" class="table">
           <thead>
               <th width="80%">Task</th><th>Action</th>
@@ -40,14 +56,16 @@
             <td><button id="addButton" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span></button>
           </tfoot>
         </table>
-      </div>
-      <footer>
-        <p>&copy; Terry God Damn Smith</p>
-      </footer>
-    </div> <!-- /container --> 
+          <footer class="row">
+              <div class="col-xs-12">
+                  <small>&copy; Terry God Damn Smith</small>
+              </div>
+          </footer>
+      </div><!-- /container -->
 
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+    <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
     <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.1.min.js"><\/script>')</script>
 
     <script src="js/vendor/bootstrap.min.js"></script>
@@ -252,6 +270,8 @@
                }
             }
 
+
+
         })(jQuery);//Passing jQuery as a parameter
 
         /**
@@ -262,6 +282,25 @@
         $(function(){
             //Bind the add button click to our table
             $("#addButton").click(table.add);
+
+            // Return a helper with preserved width of cells
+            var fixHelper = function(e, ui) {
+                ui.children().each(function() {
+                    $(this).width($(this).width());
+                });
+                return ui;
+            };
+
+            // Make sortable
+            $("#todo tbody").sortable({
+                helper: fixHelper
+            }).disableSelection();
+
+            // Make entire row clickable
+            $('#todo tbody').on('click', 'tr', function() {
+                $(this).find("button").click();
+            });
+
         });
     </script>
 
