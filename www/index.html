@@ -40,19 +40,25 @@
 
         <script src="js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
     </head>
-    <body>
+    <body ng-app="example">
       <div class="container">
       <h1>ToDO list</h1>
-        <table id="todo" class="table">
+        <table class="table" ng-controller="PageCtrl">
           <thead>
               <th width="80%">Task</th><th>Action</th>
           </thead>
           <tbody>
-            
+              <tr ng-repeat="todo in todos">
+                <td>{{todo.name}}</td>
+                <td><button class="btn btn-success" ng-click="action(todo)">
+                    <span class="glyphicon" ng-class="{ 'glyphicon-remove': task.done , 'glyphicon-ok': !task.done"></span>
+                    </button>
+                </td>
+              </tr>
           </tbody>
           <tfoot>
-            <td><input id="taskName" type="text" class="form-control" placeholder="New Task" /></td>
-            <td><button id="addButton" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span></button>
+            <td><input type="text" class="form-control" ng-model="taskName" placeholder="New Task" /></td>
+            <td><button  class="btn btn-success" ng-click="addNew()" ><span class="glyphicon glyphicon-plus"></span></button>
           </tfoot>
         </table>
           <footer class="row">
@@ -69,7 +75,11 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script>
 
     <script type="text/javascript">
+    angular.module("example",[])
+      .controller("PageCtrl",["$scope",function($scope){
+          $scope.todos = [];
 
+      }]);
     </script>
 
     </body>
