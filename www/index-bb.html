@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <style>
+            body {
+                padding-top: 50px;
+                padding-bottom: 20px;
+            }
+            .done {
+              color: #CCC;
+              text-decoration: line-through;
+            }
+            table tbody td {
+                font-size: 20px;
+                height: 55px;
+                line-height: 55px;
+            }
+            table tbody .btn {
+                display: none;
+            }
+            table tbody tr:hover {
+                cursor: pointer;
+            }
+            table tbody tr:hover .btn {
+                display: inline-block;
+            }
+        </style>
+        <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="css/main.css">
+
+        <script src="js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+    </head>
+    <body>
+      <div class="container">
+      <h1>ToDO list</h1>
+          <h5>Edited version 19th March 2014</h5>
+          <table id="todo" class="table">
+            <thead>
+                <th width="80%">Task</th><th>Action</th>
+            </thead>
+            <tbody>
+              
+            </tbody>
+            <tfoot>
+              <td><input id="taskName" type="text" class="form-control" placeholder="New Task" /></td>
+              <td><button id="addButton" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span></button>
+            </tfoot>
+          </table>
+          <footer class="row">
+              <div class="col-xs-12">
+                  <small>&copy; Terry God Damn Smith</small>
+              </div>
+          </footer>
+      </div><!-- /container -->
+    <script type="text/html" id="todo-row">
+          <td><%= text %></td>
+          <td>
+              <button class="btn <% if(!done) print('btn-primary'); else print('btn-danger') %>">
+              <span class="glyphicon <% if(!done) print('glyphicon-ok'); else print('glyphicon-remove') %>"></span>
+          </td>
+    </script>
+
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+    <script src="/js/vendor/underscore-min.js"></script>
+    <script src="/js/vendor/backbone-min.js"></script>
+    <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.1.min.js"><\/script>')</script>
+
+    <script src="js/vendor/bootstrap.min.js"></script>
+
+    <script type="text/javascript">
+
+        /**
+         * The model that defines the individual todo
+         * 
+         * Here we extending the "out of the box" backbone model but we could 
+         * also extend from our new model by using Todo.extend({});
+         */
+        var Todo = Backbone.Model.extend({
+          //Defaults properties for the model
+          defaults:{
+            text:"Blank to do....",//The text
+            done:false//The done indicator
+          }
+        });
+
+
+        /**
+         * Backbone always tried to comminicate with the server in a RESTful
+         * way. This disables that for the purpose of this demo but also checkout
+         * use of local storage
+         */
+        Todo.prototype.sync = function() { return null; };
+        Todo.prototype.fetch = function() { return null; };
+        Todo.prototype.save = function() { return null; };
+
+        /**
+         * Out collection of todo's. We set the model collection is based on
+         * Normally you have put a url on this but it is disabled by the code 
+         * above 
+         *
+         * The same rules apply about extending this collection as the model
+         * 
+         */
+        var Todos = Backbone.Collection.extend({
+            model:Todo//The model make this a collection of "Todo" as defined above
+        });
+
+        /**
+         * This the view component, it's worth checking out the docs here to 
+         * see how else they can produced. It's main functions are to build
+         * the html and listen to the events
+         */
+        var TodoItemView = Backbone.View.extend({
+            tagName:"tr",//Create a tr tag to wrap everything in
+
+            //The class name for the tr item. We can set this to a string
+            //or use it as we have here to re-evaulate based on the project 
+            //done status
+            className:function(){
+                return this.model.get("done")?"done":"";
+            },
+
+            //This is done using the underscore template engine
+            //We are grabbing the template form the script tag above
+            //but it could also be loaded from the server
+            template:_.template($("#todo-row").html()),
+
+            //This is the main powerhouse where we listen for clicks and other
+            //events in our model
+            events: {
+              //We are looking for any click events on a button tag and then 
+              //call the toggle function below
+              "click button"  : "toggle"
+            },
+
+            //When the button is clicked above this is the function that is called
+            toggle: function(){
+                //We "get" the attribute "done" from above and if it already done 
+                if(this.model.get('done')){
+                   //Just call the destroy method from our model, this will
+                   //also remove the model from the collection and handle re-draing
+                   this.model.destroy();
+                }else{
+                   //Set the done tag to true, again this will trigger Backbone
+                   //to re-draw our app etc
+                   this.model.set("done",true);
+                }
+                //Chaining
+                return this;
+            },
+            //This is the "draW" function
+            render: function(){
+                //When we use the template we complied above and add the data 
+                //from the model
+                this.$el.html(this.template(this.model.toJSON()));
+                //Chaining
+                return this;
+            }
+
+        });
+
+        /**
+         * The overall page view
+         */
+        var PageView = Backbone.View.extend({
+            //This time rather than create an element (as in page view) we are
+            //going to attach to an existing element
+            el:"#todo",
+
+            //Event listen
+            events : {
+              //Listen for clicks on the id=addButton from this view
+              "click #addButton" : "addTodo"//Run addTodo from below
+            },
+
+            //Constructor
+            //Creates the collecion and binds an event so if anything changes
+            //the view re-draws
+            initialize : function(){
+                //Create the todos collection
+                this.todos = new Todos();
+                //Scope
+                var that = this;
+                //When todos is changed in any way
+                this.todos.on("all",function(){
+                  //Redraw
+                  that.render();
+                });
+            },
+
+            //Add the error class
+            addError:function(){
+                this.$("#taskName").parent().addClass("has-error");
+            },
+
+            //Add the todo
+            addTodo: function(){
+                //Grab the text
+                var text = this.$("#taskName").val();
+                //Validate, same as week 1
+                if(!text || text.length == 0 || text == ""){
+                    this.addError();
+                    return;
+                } 
+
+                //Create the new todo and add it to the collection
+                this.todos.create({
+                  text:text
+                });
+
+
+                //Empty the task name
+                this.$("#taskName").val("");
+
+                //Chaining
+                return this;
+            },
+            //Render the whole list
+            render:function(){
+                //Empty the table
+                this.$('tbody').empty();
+                //Do render one for each item on the collection
+                this.todos.each(this.renderOne.bind(this));
+            },
+
+            //Render one item
+            renderOne:function(todo){
+              //Create a new view and add out model
+              var view = new TodoItemView({model: todo});
+              //Append the new item to the table body
+              this.$('tbody').append(view.render().el);
+            }
+        });
+
+        var app = new PageView();
+    </script>
+    </body>
+</html>
