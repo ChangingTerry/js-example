@@ -79,6 +79,15 @@
       .controller("PageCtrl",["$scope",function($scope){
           $scope.todos = [];
 
+          $scope.addNew = function(){
+            if($scope.taskName && $scope.taskName.length>0 && $scope.taskName!=""){
+                $scope.todos.push({
+                  name:$scope.taskName,
+                  done:false
+                });
+                $scope.taskName = '';
+            }
+          }
       }]);
     </script>
 
