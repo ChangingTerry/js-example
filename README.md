@@ -18,9 +18,19 @@ node server.js
 ````
 And a test server will launch on ````http://localhost:8080```` using the ````/www```` directory as your webroot
 
-##Week 1 - jQuery
 Each step can be checkout from the repo with the relevant tag name
+
+##Week 1 - jQuery
 - **Step 1** - Build the html on page
 - **Step 2** - Do the add function and do functionality
 - **Step 3** - Deleting a task
 - **Complete** - Final annotated code
+
+##Week 2 - Backbone
+- **bb-step-1** - Templates and setup
+- **bb-step-final** - Core services and annotated code
+
+##Week 3 - Angular
+- **angular-start** - Template
+- **angular-step1** - Adding the controller
+- **angular-final** - Complete annotated code
