@@ -50,8 +50,9 @@
           <tbody>
               <tr ng-repeat="todo in todos">
                 <td>{{todo.name}}</td>
-                <td><button class="btn btn-success" ng-click="action(todo)">
-                    <span class="glyphicon" ng-class="{ 'glyphicon-remove': task.done , 'glyphicon-ok': !task.done"></span>
+                <td>
+                    <button class="btn" ng-click="action(todo)" ng-class="{ 'btn-success': !todo.done , 'btn-danger': todo.done }">
+                      <span class="glyphicon" ng-class="{ 'glyphicon-remove': todo.done , 'glyphicon-ok': !todo.done } "></span>
                     </button>
                 </td>
               </tr>
@@ -75,18 +76,37 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script>
 
     <script type="text/javascript">
+    //Create Angular Module (normally separate files)
     angular.module("example",[])
+      //Define a controller to handle functions
       .controller("PageCtrl",["$scope",function($scope){
+          //Todo list
           $scope.todos = [];
-
+          //Adding a new
           $scope.addNew = function(){
+            //If the name is required
             if($scope.taskName && $scope.taskName.length>0 && $scope.taskName!=""){
+                //Push task onto list
                 $scope.todos.push({
                   name:$scope.taskName,
                   done:false
                 });
+                //Clear input
                 $scope.taskName = '';
             }
+          }
+          //Perform action
+          $scope.action = function(todo){
+            //If todo not yet done
+            if(!todo.done){
+              //Mark it done
+              todo.done = true;
+              //Bail
+              return;
+            }
+            //Otherwise remove it from the list
+            var ind = $.inArray(todo, $scope.todos);
+            $scope.todos.splice(ind,1);
           }
       }]);
     </script>
